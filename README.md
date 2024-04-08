@@ -5,44 +5,50 @@
 > 
 **Типовые запросы**
 
-1. Квартиры в одном доме и их владельцы
+1. Получить список всех квартир с их площадью и количеством комнат
 ```sql
-SELECT buildings.address, apartments.id AS apartment_id, residents.fullname
-FROM buildings
-JOIN apartments ON buildings.id = apartments.buildings_id
-JOIN apartments_has_residents ON apartments.id = apartments_has_residents.apartments_id
-JOIN residents ON apartments_has_residents.residents_id = residents.id
-WHERE buildings.id = 1; -- Замените ? на идентификатор здания
+SELECT id AS ApartmentID, rooms AS NumberOfRooms, area AS AreaInSqM
+FROM housing.apartments
+ORDER BY rooms, area;
 ```
 
-2. Получение платежей между датами
+2. Получить информацию о всех жителях определенного здания
 ```sql
-SELECT apartments.id AS apartment_id, SUM(payments.amount) AS total_payments
-FROM payments
-JOIN apartments ON payments.apartments_id = apartments.id
-WHERE payments.date BETWEEN '2024-01-01' AND '2024-04-04' -- Замените ? на начальную и конечную дату периода
-GROUP BY apartments.id;
+SELECT 
+    b.addres, 
+    r.full_name, 
+    r.dirth_date, 
+    r.phone_number,
+    COUNT(ahr.apartments_id) AS NumberOfApartments
+FROM housing.residents r
+JOIN housing.apartments_has_residents ahr ON r.id = ahr.residents_id
+JOIN housing.apartments a ON ahr.apartments_id = a.id
+JOIN housing.buildings b ON a.buildings_id = b.id
+GROUP BY r.id, b.addres, r.full_name, r.dirth_date, r.phone_number
+ORDER BY NumberOfApartments DESC, r.full_name; 
+
 ```
 
-3. Узнать квартиры без владельцев
+3. Подсчитать количество квартир, владельцы которых имеют автомобиль
 ```sql
-SELECT apartments.id AS apartment_id, buildings.address
-FROM apartments
-JOIN buildings ON apartments.buildings_id = buildings.id
-LEFT JOIN apartments_has_residents ON apartments.id = apartments_has_residents.apartments_id
-WHERE apartments_has_residents.residents_id IS NULL;
+SELECT COUNT(DISTINCT a.id) AS ApartmentsWithCarOwners
+FROM housing.apartments a
+JOIN housing.apartments_has_residents ahr ON a.id = ahr.apartments_id
+JOIN housing.residents_has_car rhc ON ahr.residents_id = rhc.residents_id;
 ```
-4. Обновить телефон владельца квартиры
+4. Список платежей по квартире за определенный меся
 ```sql
-UPDATE residents
-SET phoneNumber = "+79528120321"
-WHERE id = 2;
+SELECT a.id AS ApartmentID, p.date AS PaymentDate, p.amount AS Amount, p.type AS PaymentType
+FROM housing.payments p
+JOIN housing.apartments a ON p.apartments_id = a.id
+WHERE MONTH(p.date) = 3 AND YEAR(p.date) = 2024; -- Пример для марта 2024
+
 ```
 
-5. Показать машину с парковочным место и описанием
+5. Вывести информацию о наличии кладовых у квартир
 ```sql
-SELECT carspots.id AS carspot_id, residents.fullname, car.carPlate, carspots.description
-FROM carspots
-JOIN residents ON carspots.residents_id = residents.id
-JOIN car ON carspots.car_id = car.id;
+SELECT a.id AS ApartmentID, IF(ISNULL(s.id), 'Нет', 'Да') AS StoreroomAvailable
+FROM housing.apartments a
+LEFT JOIN housing.storerooms s ON a.id = s.apartments_id
+ORDER BY ApartmentID;
 ```
