@@ -17,14 +17,14 @@ ORDER BY rooms, area;
 SELECT 
     b.addres, 
     r.full_name, 
-    r.dirth_date, 
+    r.birth_date, 
     r.phone_number,
     COUNT(ahr.apartments_id) AS NumberOfApartments
 FROM housing.residents r
 JOIN housing.apartments_has_residents ahr ON r.id = ahr.residents_id
 JOIN housing.apartments a ON ahr.apartments_id = a.id
 JOIN housing.buildings b ON a.buildings_id = b.id
-GROUP BY r.id, b.addres, r.full_name, r.dirth_date, r.phone_number
+GROUP BY r.id, b.addres, r.full_name, r.birth_date, r.phone_number
 ORDER BY NumberOfApartments DESC, r.full_name; 
 
 ```
