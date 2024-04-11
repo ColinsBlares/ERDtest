@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.36, for Win64 (x86_64)
 --
--- Host: localhost    Database: housing
+-- Host: localhost    Database: test
 -- ------------------------------------------------------
 -- Server version	8.0.36
 
@@ -67,7 +67,7 @@ CREATE TABLE `apartments_has_residents` (
 
 LOCK TABLES `apartments_has_residents` WRITE;
 /*!40000 ALTER TABLE `apartments_has_residents` DISABLE KEYS */;
-INSERT INTO `apartments_has_residents` VALUES (5,1),(5,2),(1,3),(2,4),(2,5),(2,6),(1,7);
+INSERT INTO `apartments_has_residents` VALUES (5,1),(5,2),(1,3),(2,4),(2,5),(2,6);
 /*!40000 ALTER TABLE `apartments_has_residents` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -190,7 +190,7 @@ CREATE TABLE `logs` (
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `description` text NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -199,7 +199,7 @@ CREATE TABLE `logs` (
 
 LOCK TABLES `logs` WRITE;
 /*!40000 ALTER TABLE `logs` DISABLE KEYS */;
-INSERT INTO `logs` VALUES (1,'Addition','2024-04-08 16:24:31','Resident ID 6 was added to Apartment ID 2'),(2,'Addition','2024-04-08 16:26:27','Житель с номером 7 был добавлен в квартиру 1');
+INSERT INTO `logs` VALUES (1,'Addition','2024-04-08 16:24:31','Resident ID 6 was added to Apartment ID 2'),(2,'Addition','2024-04-08 16:26:27','Житель с номером 7 был добавлен в квартиру 1'),(3,'Addition','2024-04-11 07:23:44','Житель с номером 8 был добавлен в квартиру 1'),(4,'Addition','2024-04-11 07:33:02','Житель с номером 10 был добавлен в квартиру 3'),(5,'Addition','2024-04-11 07:33:27','Житель с номером 11 был добавлен в квартиру 2');
 /*!40000 ALTER TABLE `logs` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -242,11 +242,11 @@ DROP TABLE IF EXISTS `residents`;
 CREATE TABLE `residents` (
   `id` int NOT NULL AUTO_INCREMENT,
   `full_name` varchar(255) NOT NULL,
-  `dirth_date` date NOT NULL,
+  `birth_date` date NOT NULL,
   `registration_date` date NOT NULL,
-  `phone_number` varchar(416) DEFAULT NULL,
+  `phone_number` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -270,7 +270,7 @@ SET @saved_cs_client     = @@character_set_client;
 /*!50001 CREATE VIEW `residents_apartments_view` AS SELECT 
  1 AS `resident_id`,
  1 AS `full_name`,
- 1 AS `dirth_date`,
+ 1 AS `иirth_date`,
  1 AS `registration_date`,
  1 AS `phone_number`,
  1 AS `apartment_id`,
@@ -342,11 +342,11 @@ INSERT INTO `storerooms` VALUES (1,1,5,101),(2,2,6.5,102),(3,3,7,103),(4,4,4.5,1
 UNLOCK TABLES;
 
 --
--- Dumping events for database 'housing'
+-- Dumping events for database 'test'
 --
 
 --
--- Dumping routines for database 'housing'
+-- Dumping routines for database 'test'
 --
 /*!50003 DROP FUNCTION IF EXISTS `avg_area_per_resident` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -393,7 +393,7 @@ DELIMITER ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `add_resident_to_apartment`(
     IN p_full_name VARCHAR(255), 
-    IN p_dirth_date DATE, 
+    IN p_birth_date DATE, 
     IN p_registration_date DATE, 
     IN p_phone_number VARCHAR(45),
     IN p_apartment_id INT
@@ -412,8 +412,8 @@ BEGIN
     START TRANSACTION;
 
     -- Добавление жителя
-    INSERT INTO residents (full_name, dirth_date, registration_date, phone_number)
-    VALUES (p_full_name, p_dirth_date, p_registration_date, p_phone_number);
+    INSERT INTO residents (full_name, birth_date, registration_date, phone_number)
+    VALUES (p_full_name, p_birth_date, p_registration_date, p_phone_number);
 
     -- Получение ID только что добавленного жителя
     SET v_resident_id = LAST_INSERT_ID();
@@ -490,7 +490,7 @@ DELIMITER ;
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `residents_apartments_view` AS select `r`.`id` AS `resident_id`,`r`.`full_name` AS `full_name`,`r`.`dirth_date` AS `dirth_date`,`r`.`registration_date` AS `registration_date`,`r`.`phone_number` AS `phone_number`,`a`.`id` AS `apartment_id`,`a`.`rooms` AS `rooms`,`a`.`area` AS `area`,`b`.`id` AS `building_id`,`b`.`addres` AS `addres`,`b`.`number` AS `building_number`,`b`.`floors` AS `floors`,`b`.`aparts` AS `aparts`,`b`.`building_year` AS `building_year`,`b`.`building_enters` AS `building_enters` from (((`residents` `r` join `apartments_has_residents` `ahr` on((`r`.`id` = `ahr`.`residents_id`))) join `apartments` `a` on((`ahr`.`apartments_id` = `a`.`id`))) join `buildings` `b` on((`a`.`buildings_id` = `b`.`id`))) */;
+/*!50001 VIEW `residents_apartments_view` AS select `r`.`id` AS `resident_id`,`r`.`full_name` AS `full_name`,`r`.`birth_date` AS `иirth_date`,`r`.`registration_date` AS `registration_date`,`r`.`phone_number` AS `phone_number`,`a`.`id` AS `apartment_id`,`a`.`rooms` AS `rooms`,`a`.`area` AS `area`,`b`.`id` AS `building_id`,`b`.`addres` AS `addres`,`b`.`number` AS `building_number`,`b`.`floors` AS `floors`,`b`.`aparts` AS `aparts`,`b`.`building_year` AS `building_year`,`b`.`building_enters` AS `building_enters` from (((`residents` `r` join `apartments_has_residents` `ahr` on((`r`.`id` = `ahr`.`residents_id`))) join `apartments` `a` on((`ahr`.`apartments_id` = `a`.`id`))) join `buildings` `b` on((`a`.`buildings_id` = `b`.`id`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -504,4 +504,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-04-08 19:44:49
+-- Dump completed on 2024-04-11 10:40:37
