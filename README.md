@@ -1,4 +1,4 @@
-![Скриншот]([https://github.com/ColinsBlares/cource_work/assets/118037471/6cceeffd-99dc-4885-92c3-4a723fa26635](https://cdn.discordapp.com/attachments/1218231417465606184/1227886700638900336/ss.png?ex=662a099a&is=6617949a&hm=8beb6b12ae1d0733fb6c9156133f479fb2dd7e5f6cd538c19e71679df11f56b2&))
+![Скриншот](https://cdn.discordapp.com/attachments/1218231417465606184/1227886700638900336/ss.png?ex=662a099a&is=6617949a&hm=8beb6b12ae1d0733fb6c9156133f479fb2dd7e5f6cd538c19e71679df11f56b2&)
 
 > [!NOTE]
 > Пока что все в разработке.
