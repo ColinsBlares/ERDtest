@@ -81,5 +81,3 @@ call test.add_resident_to_apartment('Иванов Иван Иванович', '1
 call test.get_resident_details(2);
 ```
 >Получаем информацию о жильце с ID ```2```
-
-3. 
