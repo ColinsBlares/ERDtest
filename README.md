@@ -60,6 +60,9 @@ WHERE MONTH(p.date) = 3 AND YEAR(p.date) = 2024; -- Пример для март
 5. Вывести информацию о наличии кладовых у квартир
 ```sql
 SELECT a.id AS ApartmentID, IF(ISNULL(s.id), 'Нет', 'Да') AS StoreroomAvailable
+```
+
+# Хранимые процедуры
 FROM apartments a
 LEFT JOIN storerooms s ON a.id = s.apartments_id
 ORDER BY ApartmentID;
