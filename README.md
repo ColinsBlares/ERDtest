@@ -60,10 +60,15 @@ WHERE MONTH(p.date) = 3 AND YEAR(p.date) = 2024; -- Пример для март
 5. Вывести информацию о наличии кладовых у квартир
 ```sql
 SELECT a.id AS ApartmentID, IF(ISNULL(s.id), 'Нет', 'Да') AS StoreroomAvailable
-```
-
-# Хранимые процедуры
 FROM apartments a
 LEFT JOIN storerooms s ON a.id = s.apartments_id
 ORDER BY ApartmentID;
 ```
+
+# Хранимые процедуры
+
+1. Добавление жильца в квартиру
+```sql
+call test.add_resident_to_apartment('Иванов Иван Иванович', '1999-05-01', '2024-04-16', '+7999999999', 3);
+```
+>Добавляем пользователя ```Иванов Иван Иванович``` у корого дата рождения ```1999-05-01```, дата регистрации ```2024-04-16```, номер телефона ```2024-04-16``` в квартиру с id ```3```
