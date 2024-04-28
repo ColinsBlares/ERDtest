@@ -100,7 +100,7 @@ GRANT SELECT ON housing.apartments_has_residents TO basic_user_role;
 GRANT SELECT ON housing.residents_has_car TO basic_user_role;
 GRANT SELECT ON housing.payments_has_residents TO basic_user_role;
 
--- создание пользователя
+-- создание пользователя `user` с паролем `123` 
 CREATE USER 'user'@'localhost' IDENTIFIED BY '123';
 
 -- назначение 
