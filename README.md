@@ -84,6 +84,7 @@ call test.get_resident_details(2);
 
 # Создание ролей и прав
 1. Роль "Рядовой пользователь"
+> создание пользователя `user` с паролем `123` 
 ```sql
 -- создание роли
 CREATE ROLE IF NOT EXISTS basic_user_role; 
