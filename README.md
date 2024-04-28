@@ -86,7 +86,7 @@ call test.get_resident_details(2);
 1. Роль "Рядовой пользователь"
 ```sql
 -- создание роли
-CREATE ROLE basic_user_role; 
+CREATE ROLE IF NOT EXISTS basic_user_role; 
 
 -- присвоение прав
 GRANT SELECT ON housing.buildings TO basic_user_role;
