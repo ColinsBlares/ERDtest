@@ -74,12 +74,15 @@ call test.add_resident_to_apartment('Иванов Иван Иванович', '1
 >Добавляем пользователя ```Иванов Иван Иванович``` у корого дата рождения ```1999-05-01```, дата регистрации ```2024-04-16```, номер телефона ```2024-04-16``` в квартиру с id ```3```
 
 > [!CAUTION]
-> Это не может выполнить обычный пользователь.
+> Это может выполнить ТОЛЬКО роль администратор (admin_role).
 
 2. Получение информации о жильце
 ```sql
 call test.get_resident_details(2);
 ```
+> [!CAUTION]
+> Это может выполнить ТОЛЬКО роль администратор (admin_role).
+
 >Получаем информацию о жильце с ID ```2```
 
 # Создание ролей и прав
@@ -141,3 +144,23 @@ SET DEFAULT ROLE moderator_role TO 'moderator'@'localhost';
 -- применение изменений прав
 FLUSH PRIVILEGES;
 ```
+3. Роль "Администратор"
+```sql
+-- создание роли
+CREATE ROLE IF NOT EXISTS admin_role; 
+
+-- Предоставление полных прав администратору на схему housing
+GRANT ALL PRIVILEGES ON housing.* TO admin_role;
+
+-- создание пользователя, если он еще не существует
+CREATE USER IF NOT EXISTS 'admin'@'localhost' IDENTIFIED BY '123';
+
+-- назначение роли пользователю
+GRANT admin_role TO 'admin'@'localhost';
+
+-- активация роли для пользователя
+SET DEFAULT ROLE admin_role TO 'admin'@'localhost';
+
+-- применение изменений прав
+FLUSH PRIVILEGES;
+``` 
