@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.36, for Win64 (x86_64)
 --
--- Host: localhost    Database: test
+-- Host: localhost    Database: housing
 -- ------------------------------------------------------
 -- Server version	8.0.36
 
@@ -25,12 +25,12 @@ DROP TABLE IF EXISTS `apartments`;
 CREATE TABLE `apartments` (
   `id` int NOT NULL AUTO_INCREMENT,
   `buildings_id` int NOT NULL,
-  `rooms` int NOT NULL,
+  `rooms` smallint unsigned NOT NULL,
   `area` float NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_apartments_buildings_idx` (`buildings_id`),
   CONSTRAINT `fk_apartments_buildings` FOREIGN KEY (`buildings_id`) REFERENCES `buildings` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -39,7 +39,7 @@ CREATE TABLE `apartments` (
 
 LOCK TABLES `apartments` WRITE;
 /*!40000 ALTER TABLE `apartments` DISABLE KEYS */;
-INSERT INTO `apartments` VALUES (1,1,1,30.5),(2,1,2,45),(3,2,3,60.2),(4,3,2,55.1),(5,4,4,75.3),(6,2,1,28.4),(7,3,3,65.8),(8,4,2,48.6),(9,4,0,0);
+INSERT INTO `apartments` VALUES (1,1,3,72.5),(2,1,2,54),(3,2,4,89),(4,2,2,59.5);
 /*!40000 ALTER TABLE `apartments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -67,7 +67,7 @@ CREATE TABLE `apartments_has_residents` (
 
 LOCK TABLES `apartments_has_residents` WRITE;
 /*!40000 ALTER TABLE `apartments_has_residents` DISABLE KEYS */;
-INSERT INTO `apartments_has_residents` VALUES (5,1),(5,2),(1,3),(2,4),(2,5),(2,6);
+INSERT INTO `apartments_has_residents` VALUES (1,1),(4,1),(1,2),(2,3),(3,4),(2,5),(1,8);
 /*!40000 ALTER TABLE `apartments_has_residents` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -79,13 +79,18 @@ UNLOCK TABLES;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `after_resident_to_apartment_insert` AFTER INSERT ON `apartments_has_residents` FOR EACH ROW BEGIN
-    -- Формирование описания действия
-    SET @Description = CONCAT('Житель с номером ', NEW.residents_id, ' был добавлен в квартиру ', NEW.apartments_id);
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `AfterResidentToApartmentInsert` AFTER INSERT ON `apartments_has_residents` FOR EACH ROW BEGIN
+    DECLARE vFullName VARCHAR(255);
+    
+    -- Получение полного имени жителя по его ID
+    SELECT full_name INTO vFullName FROM residents WHERE id = NEW.residents_id;
+    
+    -- Формирование описания действия с использованием полного имени вместо ID
+    SET @Description = CONCAT('Житель ', vFullName, ' добавлен в квартиру с ID ', NEW.apartments_id);
     
     -- Добавление записи в лог
     INSERT INTO `logs` (`type`, `description`)
-    VALUES ('Addition', @Description);
+    VALUES ('Добавление', @Description);
 END */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -103,13 +108,13 @@ DROP TABLE IF EXISTS `buildings`;
 CREATE TABLE `buildings` (
   `id` int NOT NULL AUTO_INCREMENT,
   `addres` varchar(255) NOT NULL,
-  `number` int NOT NULL,
-  `floors` int NOT NULL,
-  `aparts` int NOT NULL,
+  `number` char(15) NOT NULL,
+  `floors` tinyint unsigned NOT NULL,
+  `aparts` smallint unsigned NOT NULL,
   `building_year` date NOT NULL,
-  `building_enters` varchar(45) NOT NULL,
+  `building_enters` smallint unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -118,7 +123,7 @@ CREATE TABLE `buildings` (
 
 LOCK TABLES `buildings` WRITE;
 /*!40000 ALTER TABLE `buildings` DISABLE KEYS */;
-INSERT INTO `buildings` VALUES (1,'Солнечная улица, 12',1,5,20,'2001-06-15','2'),(2,'Лунная улица, 34',2,10,40,'1999-12-01','4'),(3,'Звездная улица, 56',3,9,36,'2015-08-20','3'),(4,'Галактическая улица, 78',4,12,48,'2020-03-05','4');
+INSERT INTO `buildings` VALUES (1,'ул. Ленина, д. 10','B1',5,10,'2000-05-01',1),(2,'ул. Мира, д. 20','B2',8,16,'1995-01-01',2);
 /*!40000 ALTER TABLE `buildings` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -134,7 +139,7 @@ CREATE TABLE `car` (
   `car_plate` varchar(9) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `carPlate_UNIQUE` (`car_plate`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -143,7 +148,7 @@ CREATE TABLE `car` (
 
 LOCK TABLES `car` WRITE;
 /*!40000 ALTER TABLE `car` DISABLE KEYS */;
-INSERT INTO `car` VALUES (1,'А001АА77'),(2,'В123ВВ78'),(4,'М789ММ80'),(3,'С456СС79');
+INSERT INTO `car` VALUES (1,'А001АА777'),(2,'В234ВВ178');
 /*!40000 ALTER TABLE `car` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -164,7 +169,7 @@ CREATE TABLE `carspots` (
   KEY `fk_carspots_residents1_idx` (`residents_id`),
   CONSTRAINT `fk_carspots_car1` FOREIGN KEY (`car_id`) REFERENCES `car` (`id`),
   CONSTRAINT `fk_carspots_residents1` FOREIGN KEY (`residents_id`) REFERENCES `residents` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -173,7 +178,7 @@ CREATE TABLE `carspots` (
 
 LOCK TABLES `carspots` WRITE;
 /*!40000 ALTER TABLE `carspots` DISABLE KEYS */;
-INSERT INTO `carspots` VALUES (1,1,1,'Подземная парковка'),(2,2,2,'Парковка у дома'),(3,3,3,'Парковка во дворе'),(4,4,4,'Парковка за забором');
+INSERT INTO `carspots` VALUES (1,1,1,'Подземная парковка'),(2,2,2,'Открытая стоянка');
 /*!40000 ALTER TABLE `carspots` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -190,7 +195,7 @@ CREATE TABLE `logs` (
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `description` text NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -199,7 +204,7 @@ CREATE TABLE `logs` (
 
 LOCK TABLES `logs` WRITE;
 /*!40000 ALTER TABLE `logs` DISABLE KEYS */;
-INSERT INTO `logs` VALUES (1,'Addition','2024-04-08 16:24:31','Житель с номером 6 был добавлен в квартиру 2'),(2,'Addition','2024-04-08 16:26:27','Житель с номером 7 был добавлен в квартиру 1'),(3,'Addition','2024-04-11 07:23:44','Житель с номером 8 был добавлен в квартиру 1'),(4,'Addition','2024-04-11 07:33:02','Житель с номером 10 был добавлен в квартиру 3'),(5,'Addition','2024-04-11 07:33:27','Житель с номером 11 был добавлен в квартиру 2');
+INSERT INTO `logs` VALUES (1,'Добавление','2024-04-28 14:10:04','Житель ФИО добавлен в квартиру с ID 1');
 /*!40000 ALTER TABLE `logs` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -213,13 +218,13 @@ DROP TABLE IF EXISTS `payments`;
 CREATE TABLE `payments` (
   `id` int NOT NULL AUTO_INCREMENT,
   `apartments_id` int NOT NULL,
-  `date` date DEFAULT NULL,
-  `amount` decimal(10,2) DEFAULT NULL,
-  `type` varchar(255) DEFAULT NULL,
+  `date` datetime NOT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `type` enum('свет','газ','кап.ремонт') NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_payments_apartments1_idx` (`apartments_id`),
   CONSTRAINT `fk_payments_apartments1` FOREIGN KEY (`apartments_id`) REFERENCES `apartments` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -228,8 +233,35 @@ CREATE TABLE `payments` (
 
 LOCK TABLES `payments` WRITE;
 /*!40000 ALTER TABLE `payments` DISABLE KEYS */;
-INSERT INTO `payments` VALUES (1,1,'2024-03-01',2500.00,'Электроэнергия'),(2,2,'2024-03-01',1500.00,'Газ'),(3,3,'2024-03-01',3200.00,'Вода'),(4,4,'2024-03-01',4200.00,'Отопление');
+INSERT INTO `payments` VALUES (1,1,'2024-04-01 10:00:00',5000.00,'свет'),(2,2,'2024-04-01 11:00:00',3000.00,'газ'),(3,3,'2024-04-01 12:00:00',2500.00,'кап.ремонт');
 /*!40000 ALTER TABLE `payments` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `payments_has_residents`
+--
+
+DROP TABLE IF EXISTS `payments_has_residents`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `payments_has_residents` (
+  `payments_id` int NOT NULL,
+  `residents_id` int NOT NULL,
+  PRIMARY KEY (`payments_id`,`residents_id`),
+  KEY `fk_payments_has_residents_residents1_idx` (`residents_id`),
+  KEY `fk_payments_has_residents_payments1_idx` (`payments_id`),
+  CONSTRAINT `fk_payments_has_residents_payments1` FOREIGN KEY (`payments_id`) REFERENCES `payments` (`id`),
+  CONSTRAINT `fk_payments_has_residents_residents1` FOREIGN KEY (`residents_id`) REFERENCES `residents` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `payments_has_residents`
+--
+
+LOCK TABLES `payments_has_residents` WRITE;
+/*!40000 ALTER TABLE `payments_has_residents` DISABLE KEYS */;
+/*!40000 ALTER TABLE `payments_has_residents` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -244,9 +276,9 @@ CREATE TABLE `residents` (
   `full_name` varchar(255) NOT NULL,
   `birth_date` date NOT NULL,
   `registration_date` date NOT NULL,
-  `phone_number` varchar(20) DEFAULT NULL,
+  `phone_number` varchar(20) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -255,7 +287,7 @@ CREATE TABLE `residents` (
 
 LOCK TABLES `residents` WRITE;
 /*!40000 ALTER TABLE `residents` DISABLE KEYS */;
-INSERT INTO `residents` VALUES (1,'Алексей Алексеев','1983-05-21','2020-06-15','+79031234567'),(2,'Мария Иванова','1990-11-12','2019-07-22','+79037654321'),(3,'Ольга Петрова','1985-02-18','2021-09-10','+79036665432'),(4,'Дмитрий Смирнов','1978-04-08','2018-03-25','+79039876543'),(5,'Алексей Алексеевич','1992-02-15','2024-04-08','+79995553322'),(6,'testov','2024-08-08','2024-08-08','+79520616992'),(7,'Строев Максим Александрович','2004-03-08','2024-04-08','+79999999999');
+INSERT INTO `residents` VALUES (1,'Иванов Иван Иванович','1985-03-15','2020-01-10','+71234567890'),(2,'Петров Петр Петрович','1990-07-22','2020-02-20','+70987654321'),(3,'Сидорова Мария Ивановна','1995-11-30','2021-03-15','+70876543210'),(4,'Иванова Анна Петровна','1975-02-05','2020-05-05','+70765432109'),(5,'ФИО','1999-09-09','1999-09-09','+89992929'),(6,'ФИО','1999-09-09','1999-09-09','+89992929'),(7,'ФИО','2024-04-28','2024-04-28','9888'),(8,'ФИО','2024-04-28','2024-04-28','9888');
 /*!40000 ALTER TABLE `residents` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -309,7 +341,6 @@ CREATE TABLE `residents_has_car` (
 
 LOCK TABLES `residents_has_car` WRITE;
 /*!40000 ALTER TABLE `residents_has_car` DISABLE KEYS */;
-INSERT INTO `residents_has_car` VALUES (1,1),(2,2),(3,3),(4,4);
 /*!40000 ALTER TABLE `residents_has_car` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -328,7 +359,7 @@ CREATE TABLE `storerooms` (
   PRIMARY KEY (`id`),
   KEY `fk_storerooms_apartments1_idx` (`apartments_id`),
   CONSTRAINT `fk_storerooms_apartments1` FOREIGN KEY (`apartments_id`) REFERENCES `apartments` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -337,18 +368,17 @@ CREATE TABLE `storerooms` (
 
 LOCK TABLES `storerooms` WRITE;
 /*!40000 ALTER TABLE `storerooms` DISABLE KEYS */;
-INSERT INTO `storerooms` VALUES (1,1,5,101),(2,2,6.5,102),(3,3,7,103),(4,4,4.5,104);
 /*!40000 ALTER TABLE `storerooms` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Dumping events for database 'test'
+-- Dumping events for database 'housing'
 --
 
 --
--- Dumping routines for database 'test'
+-- Dumping routines for database 'housing'
 --
-/*!50003 DROP FUNCTION IF EXISTS `avg_area_per_resident` */;
+/*!50003 DROP FUNCTION IF EXISTS `GetTotalPaymentsByResident` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -358,23 +388,23 @@ UNLOCK TABLES;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` FUNCTION `avg_area_per_resident`(residentID INT) RETURNS float
-    DETERMINISTIC
+CREATE DEFINER=`root`@`localhost` FUNCTION `GetTotalPaymentsByResident`(
+    residentID INT,
+    startDate DATE,
+    endDate DATE
+) RETURNS decimal(10,2)
+    READS SQL DATA
 BEGIN
-    DECLARE vAvgArea FLOAT;
+    DECLARE total DECIMAL(10,2);
 
-    -- Вычисляем среднюю площадь квартир для заданного жителя
-    SELECT AVG(a.area) INTO vAvgArea
-    FROM apartments a
-    JOIN apartments_has_residents ahr ON a.id = ahr.apartments_id
-    WHERE ahr.residents_id = residentID;
-    
-    -- Возвращаем среднюю площадь
-    IF vAvgArea IS NULL THEN
-        RETURN 0;
-    ELSE
-        RETURN vAvgArea;
-    END IF;
+    SELECT SUM(p.amount) INTO total
+    FROM payments p
+    JOIN apartments_has_residents ar ON p.apartments_id = ar.apartments_id
+    WHERE ar.residents_id = residentID
+      AND p.date >= startDate
+      AND p.date <= endDate;
+
+    RETURN IFNULL(total, 0);
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -504,4 +534,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-04-11 10:40:37
+-- Dump completed on 2024-04-28 18:55:00
