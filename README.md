@@ -101,11 +101,43 @@ GRANT SELECT ON housing.apartments_has_residents TO basic_user_role;
 GRANT SELECT ON housing.residents_has_car TO basic_user_role;
 GRANT SELECT ON housing.payments_has_residents TO basic_user_role;
 
--- создание пользователя `user` с паролем `123` 
-CREATE USER 'user'@'localhost' IDENTIFIED BY '123';
+-- создание пользователя, если он еще не существует
+CREATE USER IF NOT EXISTS 'user'@'localhost' IDENTIFIED BY '123';
 
--- назначение 
+-- назначение роли пользователю
 GRANT basic_user_role TO 'user'@'localhost';
--- активация роли 
+-- активация роли для пользователя
 SET DEFAULT ROLE basic_user_role TO 'user'@'localhost';
+-- применение изменений прав
+FLUSH PRIVILEGES;
+```
+2. Роль "Модератор" 
+> создание пользователя `moderator` с паролем `123` 
+```sql
+-- создание роли
+CREATE ROLE IF NOT EXISTS moderator_role; 
+
+-- присвоение прав
+GRANT SELECT, INSERT, UPDATE, DELETE ON housing.buildings TO moderator_role;
+GRANT SELECT, INSERT, UPDATE, DELETE ON housing.apartments TO moderator_role;
+GRANT SELECT, INSERT, UPDATE, DELETE ON housing.residents TO moderator_role;
+GRANT SELECT, INSERT, UPDATE, DELETE ON housing.car TO moderator_role;
+GRANT SELECT, INSERT, UPDATE, DELETE ON housing.carspots TO moderator_role;
+GRANT SELECT, INSERT, UPDATE, DELETE ON housing.storerooms TO moderator_role;
+GRANT SELECT, INSERT, UPDATE, DELETE ON housing.payments TO moderator_role;
+GRANT SELECT, INSERT, UPDATE, DELETE ON housing.apartments_has_residents TO moderator_role;
+GRANT SELECT, INSERT, UPDATE, DELETE ON housing.residents_has_car TO moderator_role;
+GRANT SELECT, INSERT, UPDATE, DELETE ON housing.payments_has_residents TO moderator_role;
+
+-- создание пользователя, если он еще не существует
+CREATE USER IF NOT EXISTS 'moderator'@'localhost' IDENTIFIED BY '123';
+
+-- назначение роли пользователю
+GRANT moderator_role TO 'moderator'@'localhost';
+
+-- активация роли для пользователя
+SET DEFAULT ROLE moderator_role TO 'moderator'@'localhost';
+
+-- применение изменений прав
+FLUSH PRIVILEGES;
 ```
