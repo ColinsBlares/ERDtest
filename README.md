@@ -82,5 +82,29 @@ call test.get_resident_details(2);
 ```
 >Получаем информацию о жильце с ID ```2```
 
-# Создание ролей
-1. Роль с 
+# Создание ролей и прав
+1. Роль "Рядовой пользователь"
+```sql
+-- создание роли
+CREATE ROLE basic_user_role; 
+
+-- присвоение прав
+GRANT SELECT ON housing.buildings TO basic_user_role;
+GRANT SELECT ON housing.apartments TO basic_user_role;
+GRANT SELECT ON housing.residents TO basic_user_role;
+GRANT SELECT ON housing.car TO basic_user_role;
+GRANT SELECT ON housing.carspots TO basic_user_role;
+GRANT SELECT ON housing.storerooms TO basic_user_role;
+GRANT SELECT ON housing.payments TO basic_user_role;
+GRANT SELECT ON housing.apartments_has_residents TO basic_user_role;
+GRANT SELECT ON housing.residents_has_car TO basic_user_role;
+GRANT SELECT ON housing.payments_has_residents TO basic_user_role;
+
+-- создание пользователя
+CREATE USER 'user'@'localhost' IDENTIFIED BY '123';
+
+-- назначение 
+GRANT basic_user_role TO 'user'@'localhost';
+-- активация роли 
+SET DEFAULT ROLE basic_user_role TO 'user'@'localhost';
+```
