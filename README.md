@@ -16,7 +16,7 @@
 >
 
 # Быстрый поиск 
-1. [Типовые запросы]([url](https://github.com/ColinsBlares/cource_work?tab=readme-ov-file#типовые-запросы))
+1. [Типовые запросы](https://github.com/ColinsBlares/cource_work?tab=readme-ov-file#типовые-запросы)
 
 # Типовые запросы
 
