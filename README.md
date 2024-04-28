@@ -17,6 +17,10 @@
 
 # Быстрый поиск 
 1. [Типовые запросы](https://github.com/ColinsBlares/cource_work?tab=readme-ov-file#типовые-запросы)
+2. [Хранимые процедуры](https://github.com/ColinsBlares/cource_work?tab=readme-ov-file#хранимые-процедуры)
+3. [Представление](https://github.com/ColinsBlares/cource_work?tab=readme-ov-file#представление)
+4. [Функция](https://github.com/ColinsBlares/cource_work?tab=readme-ov-file#функция)
+5. [Создание ролей и прав](https://github.com/ColinsBlares/cource_work?tab=readme-ov-file#создание-ролей-и-прав)
 
 # Типовые запросы
 
